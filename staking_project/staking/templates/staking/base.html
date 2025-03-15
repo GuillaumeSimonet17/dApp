@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mon Application{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .drawer {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            position: fixed;
+        }
+
+        .drawer ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .drawer ul li {
+            margin: 15px 0;
+        }
+
+        .drawer ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .drawer ul li a:hover {
+            background-color: #444;
+        }
+
+        .content {
+            padding: 20px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .drawer ul li form button {
+            background-color: #f44336; /* Couleur rouge pour le bouton */
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .drawer ul li form button:hover {
+            background-color: #d32f2f; /* Couleur rouge plus foncée au survol */
+        }
+
+
+        @media screen and (max-width: 768px) {
+            .drawer {
+                width: 200px;
+            }
+
+            .content {
+                margin-left: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="drawer">
+    <h2>Menu</h2>
+    <ul>
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'update_wallet_address' %}">Settings</a></li>
+        <li>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Se déconnecter</button>
+            </form>
+        </li>
+    </ul>
+</div>
+
+<div class="content">
+    {% block content %}
+        <!-- Contenu spécifique à chaque page -->
+    {% endblock %}
+</div>
+
+</body>
+</html>

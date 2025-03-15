@@ -26,6 +26,8 @@ SECRET_KEY = 'django-insecure-h_h*#tisf75*c+ly09^h*$htfitg$6m2^t#58u!cv&1$m)hk+2
 DEBUG = True
 
 ALLOWED_HOSTS = []
+AUTH_PASSWORD_VALIDATORS = []
+
 
 ALCHEMY_URL='https://eth-sepolia.g.alchemy.com/v2/f6VVfGch2UAd-29fMXZV73o2V44R-rp8'
 CONTRACT_ADDRESS='0xB0BDa3CcA2F8fD52518E3BFFb4F1088975D8bE97'
@@ -56,7 +58,9 @@ ROOT_URLCONF = 'staking_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'staking/templates/staking',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,10 +81,15 @@ WSGI_APPLICATION = 'staking_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dapp',
+        'USER': 'guillaume',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5439',
     }
 }
+
 
 
 # Password validation

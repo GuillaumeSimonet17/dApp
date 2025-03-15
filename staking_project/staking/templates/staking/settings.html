@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <style>
+    .settigns {
+        margin-left: 250px;
+        padding-left: 50px;
+    }
+
+    </style>
+    <div class="settigns">
+        <h1>Mettre à jour l'adresse de votre wallet</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Mettre à jour</button>
+        </form>
+    </div>
+{% endblock %}

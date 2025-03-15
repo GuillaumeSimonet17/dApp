@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up</title>
+    <style>
+        /* Style global */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e3f2fd; /* Bleu clair */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #007BFF;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        input {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .switch-form {
+            margin-top: 15px;
+            color: #007BFF;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .signup-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Formulaire de connexion -->
+    <div id="login-form">
+        <h2>Connexion</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="login">Se connecter</button>
+        </form>
+        <p class="switch-form" onclick="toggleForm()">Pas encore de compte ? S'inscrire</p>
+    </div>
+
+    <!-- Formulaire d'inscription -->
+    <div id="signup-form" class="signup-form">
+        <h2>Inscription</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ signup_form.as_p }}
+            {% if signup_form.errors %}
+                <ul>
+                    {% for field in signup_form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.name }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <button type="submit" name="signup">S'inscrire</button>
+        </form>
+        <p class="switch-form" onclick="toggleForm()">Déjà inscrit ? Se connecter</p>
+    </div>
+</div>
+
+<script>
+    function toggleForm() {
+        let loginForm = document.getElementById('login-form');
+        let signupForm = document.getElementById('signup-form');
+
+        if (loginForm.style.display === "none") {
+            loginForm.style.display = "block";
+            signupForm.style.display = "none";
+        } else {
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+        }
+    }
+</script>
+
+</body>
+</html>

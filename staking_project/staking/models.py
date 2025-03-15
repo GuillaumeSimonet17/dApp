@@ -1,11 +1,11 @@
-from django.db import models
+from django.contrib.auth.models import User
 
-class UserTransaction(models.Model):
-    user_address = models.CharField(max_length=42)  # L'adresse Ethereum de l'utilisateur
-    action = models.CharField(max_length=10)  # Action: 'stake', 'unstake', etc.
-    amount = models.DecimalField(max_digits=18, decimal_places=8)  # Montant en FT42
-    transaction_hash = models.CharField(max_length=66)  # Hash de la transaction
-    timestamp = models.DateTimeField(auto_now_add=True)
+from django.db import models
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    wallet_address = models.CharField(max_length=255, blank=True, null=True)  # Adresse du wallet
 
     def __str__(self):
-        return f"{self.action} - {self.amount} FT42"
+        return f"{self.user.username} - {self.wallet_address}"
