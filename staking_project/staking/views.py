@@ -76,9 +76,11 @@ def dashboard(request):
         tokens_for_next_level = get_tokens_for_next_level(wallet_address) / (10 ** 18)
     except:
         return render(request, 'staking/dashboard.html', {
+            'username': user_profile.user.username,
             'wallet_valid': False,
         })
     return render(request, 'staking/dashboard.html', {
+        'username': user_profile.user.username,
         'wallet_valid': True,
         'balance': balance,
         'staked_balance': staked_balance_in_tokens,
