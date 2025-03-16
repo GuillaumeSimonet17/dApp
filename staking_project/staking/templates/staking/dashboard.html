@@ -4,6 +4,61 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+    <script>
+        async function stakeTokens() {
+            // Récupérer le montant du staking depuis le champ input
+            const amount = document.getElementById("amount").value;
+
+            // Vérifier si le montant est valide
+            if (amount <= 0) {
+                alert("Veuillez entrer un montant valide.");
+                return;
+            }
+
+            // Vérifier si l'utilisateur est connecté (par exemple, en vérifiant la présence d'un compte MetaMask)
+            if (typeof window.ethereum === "undefined") {
+                alert("Veuillez installer MetaMask.");
+                return;
+            }
+
+            // Récupérer l'adresse de l'utilisateur via MetaMask
+            const accounts = await ethereum.request({method: 'eth_requestAccounts'});
+            const userAddress = accounts[0];
+
+            // Convertir le montant en Wei (unités de base pour Ethereum)
+            const amountInWei = Web3.utils.toWei(amount, 'ether');
+
+            // Créer une instance de Web3.js
+            const web3 = new Web3(window.ethereum);
+
+            // Définir l'adresse du contrat de staking et le contrat ABI
+            const stakingContractAddress = "0xYourStakingContractAddress";
+            const stakingContractABI = [/* ABI du contrat de staking ici */];
+
+            // Créer une instance du contrat de staking
+            const stakingContract = new web3.eth.Contract(stakingContractABI, stakingContractAddress);
+
+            // Vérifier que l'utilisateur a approuvé le contrat pour transférer des tokens (si nécessaire)
+            const tokenContractAddress = "0xYourTokenContractAddress";  // Adresse du contrat du token
+            const tokenContractABI = [/* ABI du contrat ERC20 ici */];
+            const tokenContract = new web3.eth.Contract(tokenContractABI, tokenContractAddress);
+
+            const allowance = await tokenContract.methods.allowance(userAddress, stakingContractAddress).call();
+            if (allowance < amountInWei) {
+                // Si l'utilisateur n'a pas donné assez de permission, approuver la transaction
+                const approveTx = await tokenContract.methods.approve(stakingContractAddress, amountInWei).send({from: userAddress});
+                console.log("Approvisionnement réussi", approveTx);
+            }
+
+            // Effectuer la transaction de staking
+            const stakeTx = await stakingContract.methods.stakeTokens(amountInWei).send({from: userAddress});
+
+            // Afficher le résultat de la transaction
+            alert("Transaction envoyée ! Hash de la transaction : " + stakeTx.transactionHash);
+        }
+
+
+    </script>
     <div class="container">
         <h1 class="text-center my-5">Dashboard de {{ username }}</h1>
 
@@ -14,7 +69,8 @@
                     <div class="card bg-light p-3 d-flex flex-column  justify-content-center">
                         <p class="m-1"><strong>Solde actuel : </strong><span
                                 class="badge bg-primary">{{ balance|intcomma }} FT42</span></p>
-                        <p class="m-1"><strong>Solde staké : </strong><span class="badge bg-success">{{ staked_balance|intcomma }} FT42</span>
+                        <p class="m-1"><strong>Solde staké : </strong><span
+                                class="badge bg-success">{{ staked_balance|intcomma }} FT42</span>
                         </p>
                     </div>
                 </div>
@@ -29,9 +85,32 @@
                 </div>
             </div>
 
+            <div class="container mt-4">
+                <h2>Staker des Tokens</h2>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" action="{% url 'stake_tokens' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Montant à staker</label>
+                        <input type="number" id="amount" name="amount" class="form-control"
+                               placeholder="Entrez le montant"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Staker</button>
+                </form>
+            </div>
+
+
         {% else %}
             <div class="row">
-                <a class="nav-link text-center" href="{% url 'update_wallet_address' %}">Please enter your wallet address in
+                <a class="nav-link text-center" href="{% url 'update_wallet_address' %}">Please enter your wallet
+                    address in
                     <span class="fw-bold">Settings</span> to access to your account</a>
             </div>
         {% endif %}

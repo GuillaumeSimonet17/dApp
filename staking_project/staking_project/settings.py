@@ -28,9 +28,17 @@ DEBUG = True
 ALLOWED_HOSTS = []
 AUTH_PASSWORD_VALIDATORS = []
 
+import os
+from dotenv import load_dotenv
 
-ALCHEMY_URL='https://eth-sepolia.g.alchemy.com/v2/f6VVfGch2UAd-29fMXZV73o2V44R-rp8'
-CONTRACT_ADDRESS='0xB0BDa3CcA2F8fD52518E3BFFb4F1088975D8bE97'
+# Charger les variables d'environnement depuis le fichier .env
+load_dotenv()
+
+# Récupérer l'adresse du contrat depuis la variable d'environnement
+TOKEN_CONTRACT_ADDRESS = os.getenv('TOKEN_CONTRACT_ADDRESS')
+STAKING_CONTRACT_ADDRESS = os.getenv('STAKING_CONTRACT_ADDRESS')
+
+ALCHEMY_URL = os.getenv('ALCHEMY_URL')
 
 INSTALLED_APPS = [
     'django.contrib.admin',

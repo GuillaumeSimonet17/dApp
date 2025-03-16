@@ -1,13 +1,14 @@
-from .sepolia import get_user_balance, get_staked_balance, get_user_level, get_tokens_for_next_level
+from .sepolia import get_user_balance, get_staked_balance, get_user_level, get_tokens_for_next_level, \
+    stake_tokens_on_contract
 from django.contrib.auth.models import User
-from .forms import SignUpForm  # Assure-toi que tu as un formulaire d'inscription
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from .forms import SignUpForm
+from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import WalletAddressForm
 from .models import UserProfile
 from .forms import LoginForm
+from django.contrib import messages
 
 
 def login_signup(request):
@@ -46,7 +47,7 @@ def login_signup(request):
                 
                 user = User.objects.create_user(username=username, email=email, password=password)
                 UserProfile.objects.create(user=user)
-
+                
                 login(request, user)
                 
                 return redirect('dashboard')
@@ -65,13 +66,14 @@ def login_signup(request):
 def dashboard(request):
     user_profile = UserProfile.objects.get(user=request.user)
     wallet_address = user_profile.wallet_address
-    
     try:
+        
         balance = get_user_balance(wallet_address)
         
         staked_balance = get_staked_balance(wallet_address)
-        staked_balance_in_tokens = staked_balance / (10 ** 18)
         
+        staked_balance_in_tokens = staked_balance / (10 ** 18)
+
         user_level = get_user_level(wallet_address)
         tokens_for_next_level = get_tokens_for_next_level(wallet_address) / (10 ** 18)
     except:
@@ -87,6 +89,33 @@ def dashboard(request):
         'user_level': user_level,
         'tokens_for_next_level': tokens_for_next_level,
     })
+
+# TODO : verif dans le back c'est cool mais faut que le user signe sur metamask dans le front avant de staker
+
+def stake_tokens(request):
+    if request.method == "POST":
+        amount = request.POST.get("amount")
+
+        if not amount or float(amount) <= 0:
+            messages.error(request, "Veuillez entrer un montant valide.")
+            return redirect("dashboard")
+
+        user_profile = UserProfile.objects.get(user=request.user)
+        wallet_address = user_profile.wallet_address
+
+        user_balance = get_user_balance(wallet_address)
+        if user_balance < float(amount):
+            messages.error(request, "Fonds insuffisants pour staker ce montant.")
+            return redirect("dashboard")
+
+        success, tx_hash = stake_tokens_on_contract(request.user, wallet_address, int(amount))
+
+        if success:
+            messages.success(request, f"Vous avez staké {amount} tokens avec succès ! (TX: {tx_hash})")
+        else:
+            messages.error(request, "Échec du staking. Veuillez réessayer.")
+
+    return redirect("dashboard")
 
 
 @login_required
