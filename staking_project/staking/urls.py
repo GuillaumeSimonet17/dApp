@@ -9,5 +9,4 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     # path('settings/', views.settings, name='settings'),
     path('update-wallet/', views.update_wallet_address, name='update_wallet_address'),
-
 ]

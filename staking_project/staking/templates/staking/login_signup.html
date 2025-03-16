@@ -35,9 +35,7 @@
         }
 
         label {
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: left;
+            display: none;
         }
 
         input {
@@ -80,11 +78,27 @@
 
 <div class="container">
     <!-- Formulaire de connexion -->
+    {% if message %}
+        <div id="msg">
+            {% for error in message %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div id="login-form">
         <h2>Connexion</h2>
         <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
+            <div class="mb-3">
+                <label for="id_username">Nom d'utilisateur</label>
+                {{ form.username }}  <!-- Cela affiche le champ username avec le placeholder -->
+            </div>
+
+            <div class="mb-3">
+                <label for="id_password">Mot de passe</label>
+                {{ form.password }}  <!-- Cela affiche le champ password avec le placeholder -->
+            </div>
             <button type="submit" name="login">Se connecter</button>
         </form>
         <p class="switch-form" onclick="toggleForm()">Pas encore de compte ? S'inscrire</p>
@@ -95,36 +109,44 @@
         <h2>Inscription</h2>
         <form method="POST">
             {% csrf_token %}
-            {{ signup_form.as_p }}
-            {% if signup_form.errors %}
-                <ul>
-                    {% for field in signup_form %}
-                        {% for error in field.errors %}
-                            <li>{{ field.name }}: {{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
+            <div class="mb-3">
+                <label for="id_username">Nom d'utilisateur</label>
+                {{ signup_form.username }}
+            </div>
+            <div class="mb-3">
+                <label for="id_email">Email</label>
+                {{ signup_form.email }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_password">Mot de passe</label>
+                {{ signup_form.password }}
+            </div>
+            <div class="mb-3">
+                <label for="id_confirm_password">Confirmer le mot de passe</label>
+                {{ signup_form.confirm_password }}
+            </div>
+
             <button type="submit" name="signup">S'inscrire</button>
         </form>
         <p class="switch-form" onclick="toggleForm()">Déjà inscrit ? Se connecter</p>
     </div>
 </div>
 
-<script>
-    function toggleForm() {
-        let loginForm = document.getElementById('login-form');
-        let signupForm = document.getElementById('signup-form');
+    <script>
+        function toggleForm() {
+            let loginForm = document.getElementById('login-form');
+            let signupForm = document.getElementById('signup-form');
 
-        if (loginForm.style.display === "none") {
-            loginForm.style.display = "block";
-            signupForm.style.display = "none";
-        } else {
-            loginForm.style.display = "none";
-            signupForm.style.display = "block";
+            if (loginForm.style.display === "none") {
+                loginForm.style.display = "block";
+                signupForm.style.display = "none";
+            } else {
+                loginForm.style.display = "none";
+                signupForm.style.display = "block";
+            }
         }
-    }
-</script>
+    </script>
 
 </body>
 </html>

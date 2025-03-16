@@ -1,78 +1,39 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard{% endblock %}
+
 {% block content %}
+    <div class="container">
+        <h1 class="text-center my-5">Bienvenue sur le Dashboard</h1>
 
-    {% load humanize %}
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                background-color: #f4f4f4;
-            }
+        {% if wallet_valid %}
 
-            /* Style du Contenu principal */
-            .dashboard {
-                margin-left: 250px;
-                padding-left: 50px;
-                width: 100%;
-                background-color: #fff;
-                min-height: 100vh;
-            }
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <div class="card bg-light p-3 d-flex flex-column  justify-content-center">
+                        <p class="m-1"><strong>Solde actuel : </strong><span
+                                class="badge bg-primary">{{ balance|intcomma }} FT42</span></p>
+                        <p class="m-1"><strong>Solde staké : </strong><span class="badge bg-success">{{ staked_balance|intcomma }} FT42</span>
+                        </p>
+                    </div>
+                </div>
 
-            h1 {
-                font-size: 32px;
-                font-weight: bold;
-                color: #333;
-                margin-bottom: 20px;
-            }
+                <div class="col-md-6">
+                    <div class="card bg-light p-3">
+                        <p class="m-1"><strong>Niveau : </strong>{{ user_level }}</p>
+                        <p class="m-1"><strong>Tokens nécessaires pour passer au niveau supérieur :</strong>
+                            <span class="badge bg-warning text-dark">{{ tokens_for_next_level }} FT42</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-            /* Style pour les paragraphes du header */
-            header p {
-                font-size: 18px;
-                color: #555;
-                margin: 10px 0;
-            }
-
-            header p strong {
-                font-weight: bold;
-                color: #333;
-            }
-
-            /* Style des valeurs numériques avec séparation de milliers */
-            .balance, .staked_balance, .tokens_for_next_level {
-                font-size: 22px;
-                font-weight: bold;
-                color: #4CAF50;
-            }
-
-            .tokens_for_next_level {
-                color: #FF5722;
-            }
-        </style>
-    </head>
-    <body>
-
-    <!-- Contenu principal -->
-    <div class="dashboard">
-        <header>
-            {% if wallet_valid %}
-                <h1>Bienvenue sur le Dashboard</h1>
-                <p><strong>Solde actuel : </strong><span class="balance">{{ balance|intcomma }} FT42</span></p>
-                <p><strong>Solde staké : </strong><span class="staked_balance">{{ staked_balance|intcomma }} FT42</span>
-                </p>
-                <p><strong>Niveau : </strong>{{ user_level }}</p>
-                <p><strong>Tokens nécessaires pour passer au niveau supérieur: </strong><span
-                        class="tokens_for_next_level">{{ tokens_for_next_level }} FT42</span></p>
-            {% else %}
-                <p>Aucune donnée disponible.</p>
-            {% endif %}
-        </header>
+        {% else %}
+            <div class="row">
+                <a class="nav-link text-center" href="{% url 'update_wallet_address' %}">Please enter your wallet address in
+                    <span class="fw-bold">Settings</span> to access to your account</a>
+            </div>
+        {% endif %}
     </div>
-
-    </body>
 {% endblock %}
