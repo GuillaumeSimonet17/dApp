@@ -2,7 +2,6 @@ from web3 import Web3
 import json
 from django.conf import settings
 
-from staking.models import UserProfile
 
 TOKEN_CONTRACT_ADDRESS = settings.TOKEN_CONTRACT_ADDRESS
 STAKING_CONTRACT_ADDRESS = settings.STAKING_CONTRACT_ADDRESS

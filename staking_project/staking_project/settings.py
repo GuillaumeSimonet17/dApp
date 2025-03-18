@@ -40,6 +40,9 @@ STAKING_CONTRACT_ADDRESS = os.getenv('STAKING_CONTRACT_ADDRESS')
 
 ALCHEMY_URL = os.getenv('ALCHEMY_URL')
 
+SESSION_COOKIE_AGE = 3600  # Expire après 1 heure
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Expire à la fermeture du navigateur
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
